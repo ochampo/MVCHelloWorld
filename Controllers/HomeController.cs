@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Web;
 using System.Web.Mvc;
 
@@ -9,6 +10,27 @@ namespace MVCHelloWorld.Controllers
 {
     public class HomeController : Controller
     {
+        ObjectCache cache = MemoryCache.Default;
+        List<Customer> customers;
+
+        public HomeController()
+        {
+            customers = cache["customers"] as List<Customer>;
+            if (customers == null)
+            {
+                customers = new List<Customer>();
+
+            }
+
+        }
+
+        public void SaveCache()
+        {
+            cache["customers"] = customers;
+        }
+
+
+
         public ActionResult Index()
         {
             return View();
@@ -44,15 +66,20 @@ namespace MVCHelloWorld.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult AddCustomer(Customer customer)
+        {
+            customer.id = Guid.NewGuid().ToString();
+            customers.Add(customer);
+            SaveCache();
+
+
+            return RedirectToAction("CustomerList");
+        }
+
         public ActionResult CustomerList()
         {
-            List<Customer> customers = new List<Customer>();
-            {
-                customers.Add(new Customer() { Name = "peter", Telephone = "7145926137" });
-                customers.Add(new Customer() { Name = "Daniel", Telephone = "4151324512" });
-
-
-            }
+           
 
             return View(customers);
 

@@ -10,7 +10,6 @@ namespace MVCHelloWorld.Models
         public string id { get; set; }
         public string Name { get; set; }
         public string Telephone { get; set; }
-        
-
+      //this where we get tranfer the data 
     }
 }
